@@ -62,7 +62,7 @@ const AboutDialog = ({ show, onCancel }) => {
                                 <TableRow>
                                     <TableCell>Current Version</TableCell>
                                     <TableCell>Latest Version</TableCell>
-                                    <TableCell>Published At</TableCell>
+                                    {/* <TableCell>Published At</TableCell> */}
                                 </TableRow>
                             </TableHead>
                             <TableBody>
