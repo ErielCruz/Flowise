@@ -6,8 +6,14 @@ USER root
 # Skip downloading Chrome for Puppeteer (saves build time)
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 
-# Install latest Flowise globally (specific version can be set: flowise@1.0.0)
-RUN npm install -g flowise
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the local repository files into the container
+COPY . .
+
+# Install the dependencies locally
+RUN npm install
 
 # Stage 2: Runtime stage
 FROM node:20-alpine
@@ -18,8 +24,13 @@ RUN apk add --no-cache chromium git python3 py3-pip make g++ build-base cairo-de
 # Set the environment variable for Puppeteer to find Chromium
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# Copy Flowise from the build stage
-COPY --from=build /usr/local/lib/node_modules /usr/local/lib/node_modules
-COPY --from=build /usr/local/bin /usr/local/bin
+# Copy the built application from the build stage
+COPY --from=build /app /app
+
+# Set the working directory
+WORKDIR /app
+
+# Ensure the local bin folder is in the PATH
+ENV PATH /app/node_modules/.bin:$PATH
 
 ENTRYPOINT ["flowise", "start"]
